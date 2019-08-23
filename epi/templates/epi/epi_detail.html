@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+{% extends 'epi/epi_list.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<html lang="pt">
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'epi:epi_list' %}">EPI's</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+{% endblock %}
+
+{% block main_content %}
+<div class="card mt-3 shadow">
+    <div class="card-header">
+        <h3 class="display-5 text-center">{{ object }}</h3>
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <a class="btn btn-warning" href="{% url 'epi:epi_update' slug=object.slug %}" role="button"
+                       data-toggle="tooltip" data-placement="top" title="Editar">
+                        <i class="fas fa-edit fa-sm"></i>
+                    </a>
+                    <a class="btn btn-danger" href="{% url 'epi:epi_delete' slug=object.slug %}" role="button"
+                       data-toggle="tooltip" data-placement="top" title="Remover">
+                        <i class="fas fa-trash-alt fa-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>Estado: </b> {{ object.estado }}</li>
+                        <li class="list-group-item"><b>Sala: </b> {{ object.sala }}</li>
+                        <li class="list-group-item"><b>Marca: </b> {{ object.marca }}</li>
+                        <li class="list-group-item"><b>Modelo: </b> {{ object.modelo }}</li>
+                        <li class="list-group-item"><b>Tamanho: </b> {{ object.tamanho }}</li>
+                        <li class="list-group-item"><b>Género: </b> {{ object.genero }}</li>
+                        <li class="list-group-item"><b>Referência: </b> {{ object.referencia }}</li>
+                    </ul>
+                </div>
+                <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>Pb (mm): </b> {{ object.espessuraPb }}</li>
+                        <li class="list-group-item"><b>Norma: </b> {{ object.norma }}</li>
+                        <li class="list-group-item"><b>Data: </b> {{ object.data|date:"Y" }}</li>
+                        <li class="list-group-item"><b>Tamanho: </b> {{ object.tamanho }}</li>
+                        <li class="list-group-item"><b>Verificações: </b>
+                            {% if object.get_state == "Com defeito" %}
+                            <i class="fas fa-exclamation-triangle" style="color: orange;"></i>
+                            {% elif object.get_state == "OK" %}
+                            <i class="fas fa-check-circle" style="color: green;"></i>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item"><b>Cor: </b> <i class="fas fa-circle"
+                                                                    style="color: {{ object.cor }};"></i></li>
+                        <li class="list-group-item"><b>Utilização: </b> {{ object.utilizacao }}</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h5 class="mt-3">Última verificação: {{ latest_ver.data }}</h5>
+            <div class="table-responsive mt-3">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Acondicionamento</th>
+                        <th scope="col">Conservação</th>
+                        <th scope="col">Fita/Velcro</th>
+                        <th scope="col">Limpeza</th>
+                        <th scope="col">Obs</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% if latest_ver %}
+                    <tr class="shadow-sm p-3 mb-5 rounded table-row"
+                        data-href="{% url 'epi:verif_detail' slug=object.slug pk=latest_ver.pk %}">
+                        <td scope="row">
+                            {% if latest_ver.acondicionamento %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ latest_ver.conservacao }}</td>
+                        <td scope="row">
+                            {% if latest_ver.fitavelcro %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ latest_ver.limpeza }}</td>
+                        <td scope="row">{{ latest_ver.obs }}</td>
+                    </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <a class="btn btn-outline-success btn-lg" href="{% url 'epi:verif_create' slug=object.slug %}" role="button"
+               data-toggle="tooltip" data-placement="top" title="Nova verificação">
+                <i class="fas fa-plus"></i> Verificação
+            </a>
+            <p><i><b>Frequências das verificações recomendada: </b></i>{{ object.get_ver_frequency }}</p>
+
+            <h4 class="mt-3 text-center">Historial de verificações</h4>
+            <form class="form-inline mt-3" method="get" action="">
+                {{ filter.form }}
+                <button class="btn btn-primary mt-3 ml-2" type="submit">Filtrar</button>
+            </form>
+            <div class="table-responsive mt-3">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Data</th>
+                        <th scope="col">Acondicionamento</th>
+                        <th scope="col">Conservação</th>
+                        <th scope="col">Fita/Velcro</th>
+                        <th scope="col">Limpeza</th>
+                        <th scope="col">Obs</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for v in filter.qs %}
+                    <tr class="shadow-sm p-3 mb-5 rounded table-row"
+                        data-href="{% url 'epi:verif_detail' slug=object.slug pk=v.pk %}">
+                        <td scope="row">{{ v.data }}</td>
+                        <td scope="row">
+                            {% if v.acondicionamento %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ v.conservacao }}</td>
+                        <td scope="row">
+                            {% if v.acondicionamento %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ v.limpeza }}</td>
+                        <td scope="row">{{ v.obs }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <a class="btn btn-secondary" href="{% url 'epi:epi_list' %}" role="button">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+</html>

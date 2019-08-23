@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% extends 'epi/epi_list.html' %}
+{% load staticfiles %}
+<html lang="pt">
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'epi:epi_list' %}">EPI's</a></li>
+<li class="breadcrumb-item"><a href="{{ epi.get_absolute_url }}">{{ epi }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">Nova Verificação</li>
+{% endblock %}
+
+{% block main_content %}
+<div class="card mt-mb-3 shadow">
+    <form method="post" enctype="multipart/form-data" action="">
+        {{ form.management_form }}
+        {% csrf_token %}
+        {{ form.epi }}
+        {{ form.utilizador }}
+        {{ formset.management_form }}
+        <div class="card-header">
+            <h3 class="display-5 text-center">Verificação</h3>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                <div class="form-row">
+                    {% for field in form.visible_fields %}
+                    <div class="form-group col-md-3">
+                        <label>{{ field.label_tag }}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <h5>Imagens</h5>
+                <div class="form-row">
+                    {% for form in formset.forms %}
+                    <div class="form-group col-md-3">
+                        {{ form.image }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button class="btn btn-primary" type="submit">Gravar</button>
+                    <button type="reset" class="btn btn-secondary">Limpar</button>
+                    <a class="btn btn-secondary" href="{{ view.get_success_url }}" role="button">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+</html>

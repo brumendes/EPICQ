@@ -1,0 +1,9 @@
+body {
+    padding-top: 70px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+}
+
+.table-row{
+    cursor:pointer;
+}

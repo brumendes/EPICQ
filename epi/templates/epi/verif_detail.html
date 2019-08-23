@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+{% extends 'epi/epi_list.html' %}
+{% load staticfiles %}
+<html lang="pt">
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{% url 'epi:epi_list' %}">EPI's</a></li>
+<li class="breadcrumb-item"><a href="{{ object.epi.get_absolute_url }}">{{ object.epi }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">{{ object }}</li>
+{% endblock %}
+
+{% block main_content %}
+<div class="card mt-mb-3 shadow">
+    <div class="card-header">
+        <h3 class="display-5 text-center">{{ object }}</h3>
+    </div>
+    <div class="card-body">
+        <div class="card-text">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <a class="btn btn-warning" href="{% url 'epi:verif_update' slug=object.epi.slug pk=object.pk %}"
+                       role="button" data-toggle="tooltip" data-placement="top" title="Editar">
+                        <i class="fas fa-edit fa-sm"></i>
+                    </a>
+                    <a class="btn btn-danger" href="{% url 'epi:verif_delete' slug=object.epi.slug pk=object.pk %}"
+                       role="button"
+                       data-toggle="tooltip" data-placement="top" title="Remover">
+                        <i class="fas fa-trash-alt fa-sm"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><b>Data: </b> {{ object.data }}</li>
+                        <li class="list-group-item">
+                            <b>Acondicionamento: </b>
+                            {% if object.acondicionamento %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item"><b>Conservação: </b>{{ object.conservacao }}</li>
+                        <li class="list-group-item">
+                            <b>Fita/Velcro: </b>
+                            {% if object.fitavelcro %}
+                            <i class="fas fa-check" style="color: green;"></i>
+                            {% else %}
+                            <i class="fas fa-close" style="color: red;"></i>
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item"><b>Limpeza: </b>{{ object.limpeza }}</li>
+                        <li class="list-group-item"><b>Obs: </b>{{ object.obs }}</li>
+                    </ul>
+                </div>
+                <div class="col-6">
+                    {% if object.imagens.all %}
+                    {% with object.imagens.all as images %}
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            {% for im in images %}
+                            <li data-target="#carouselExampleIndicators" data-slide-to="{{forloop.counter0}}"
+                                {% if forloop.first %} class="active"{% endif %}></li>
+                            {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                            {% for im in images %}
+                            <div class="carousel-item{% if forloop.first %} active{% endif %}">
+                                <img class="d-block w-100" src="{{ im.image.url }}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button"
+                           data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button"
+                           data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                    {% endwith %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+            <div class="btn-group mr-2" role="group" aria-label="First group">
+                <a class="btn btn-secondary" href="{{ object.epi.get_absolute_url }}" role="button">Voltar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+</html>

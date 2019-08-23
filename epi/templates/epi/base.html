@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="pt">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content=".">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <link rel="icon" type="image/png" href="{%static 'epi/images/ipo-small-logo.png' %}">
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css"
+          integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+
+    <meta name="author" content="Bruno Mendes">
+    <title>EPICQ</title>
+    {% block custom_css %}
+
+    {% endblock %}
+</head>
+
+<body {% block body_class %} {% endblock %}>
+{% block body_content %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow fixed-top">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+            aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+        <img src="{%static 'epi/images/ipo-logo.png' %}" alt="" style="height: 40px;">
+        <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
+            <li class="nav-item active">
+                <a class="nav-link">{{ request.user }} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/accounts/logout/">
+                    Sair <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<nav aria-label="breadcrumb-fluid shadow" style="margin: auto;">
+    <ol class="breadcrumb">
+        {% block breadcrumb_items %}
+        <li class="breadcrumb-item active" aria-current="page">EPI's</li>
+        {% endblock %}
+    </ol>
+</nav>
+
+{% if messages %}
+<div class="container">
+    {% for message in messages %}
+    <div {% if message.tags %} class="{{ message.tags }}" {% endif %} role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-3">
+    {% block main_content %}
+    {% endblock %}
+</div>
+
+<!--Javascript Libs-->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+<script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+$('.alert').alert()
+</script>
+<script src="{% static 'epi/js/main.js' %}"></script>
+
+{% block js %}
+
+{% endblock %}
+
+</body>
+{% endblock %}
+</html>

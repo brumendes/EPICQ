@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends 'epi/epi_list.html' %}
+{% load staticfiles %}
+<html lang="pt">
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{{ view.success_url }}">EPI's</a></li>
+<li class="breadcrumb-item"><a href="{{ object.get_absolute_url }}">{{ object }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">Editar</li>
+{% endblock %}
+
+{% block main_content %}
+<div class="card mt-mb-3 shadow">
+    <form method="post" action="">
+        {{ form.management_form }}
+        {% csrf_token %}
+        <div class="card-header">
+            <h3 class="display-5 text-center">Editar EPI: {{ object }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                <div class="form-row">
+                    {% for field in form %}
+                    <div class="form-group col-md-3">
+                        <label>{{ field.label_tag }}</label>
+                        {{ field }}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="btn-toolbar mb-3" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group mr-2" role="group" aria-label="First group">
+                    <button class="btn btn-primary" type="submit">Gravar</button>
+                    <a class="btn btn-secondary" href="{{ object.get_absolute_url }}" role="button">Cancelar</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+</html>

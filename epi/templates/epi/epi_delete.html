@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% extends 'epi/epi_list.html' %}
+{% load staticfiles %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item"><a href="{{ view.success_url }}">EPI's</a></li>
+<li class="breadcrumb-item"><a href="{{ object.get_absolute_url }}">{{ object }}</a></li>
+<li class="breadcrumb-item active" aria-current="page">Apagar?</li>
+{% endblock %}
+
+{% block main_content %}
+<form action="" method="post">
+    {{ form.management_form }}
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="display-5 text-center">Confirmação</h3>
+        </div>
+        <div class="card-body">
+            <div class="card-text">
+                <h5 class="card-title">Apagar?</h5>
+                <p class="card-text">Tem a certeza que deseja apagar "{{ object }}"?</p>
+                <p class="card-text">As seguintes verificações serão também apagadas: </p>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <caption>Verificações</caption>
+                        <thead>
+                        <tr>
+                            <th scope="col">Data</th>
+                            <th scope="col">Acondicionamento</th>
+                            <th scope="col">Conservação</th>
+                            <th scope="col">Fita/Velcro</th>
+                            <th scope="col">Limpeza</th>
+                            <th scope="col">Obs</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for v in object.verif_epis.all %}
+                        <tr>
+                            <td scope="row">{{ v.data }}</td>
+                            <td scope="row">
+                                {% if v.acondicionamento %}
+                                <i class="fas fa-check" style="color: green;"></i>
+                                {% else %}
+                                <i class="fas fa-close" style="color: red;"></i>
+                                {% endif %}
+                            </td>
+                            <td scope="row">{{ v.conservacao }}</td>
+                            <td scope="row">
+                                {% if v.acondicionamento %}
+                                <i class="fas fa-check" style="color: green;"></i>
+                                {% else %}
+                                <i class="fas fa-close" style="color: red;"></i>
+                                {% endif %}
+                            </td>
+                            <td scope="row">{{ v.limpeza }}</td>
+                            <td scope="row">{{ v.obs }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a class="btn btn-secondary" href="{{ object.get_absolute_url }}">Não</a>
+            <button class="btn btn-danger" type="submit" value="Confirm">Sim</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

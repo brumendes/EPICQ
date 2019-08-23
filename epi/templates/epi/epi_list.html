@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% extends 'epi/base.html' %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<html lang="pt">
+
+{% block custom_css %}
+<link rel="stylesheet" href="{%static 'epi/css/base.css' %}">
+{% endblock %}
+
+{% block main_content %}
+<div class="card mt-3 shadow">
+    <div class="card-header">
+        <h3 class="display-5 text-center">Equipamento de protecção individual</h3>
+    </div>
+    <div class="card-body">
+
+            <form method="get" action="/" id="scanner_form">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="id_sala">{{ filter.form.sala.label_tag }}</label>
+                                    {{ filter.form.sala }}
+                                    </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="id_tipo">{{ filter.form.tipo.label_tag }}</label>
+                                    {{ filter.form.tipo }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="id_slug">{{ filter.form.slug.label_tag }}</label>
+                                    {{ filter.form.slug }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-row">
+                                {{ filter.form.range }}
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-block" type="submit">Filtrar</button>
+                    </div>
+                    <div class="col-md-6">
+                            <div class="form-group mt-3 ml-2">
+                                <label for="scannerInput">Scanner: </label>
+                                <input type="text" class="form-control" id="scannerInput">
+                            </div>
+                            <a class="btn btn-outline-success btn-lg btn-block" href="{% url 'epi:epi_create' %}" role="button"
+                            data-toggle="tooltip" data-placement="top" title="Novo EPI">
+                                <i class="fas fa-plus"></i> EPI
+                            </a>
+                        </div>
+                </div>
+            </form>
+
+            <hr>
+
+            <div class="card-text">
+            <div class="table-responsive mt-3">
+                <table class="table table-hover">
+                    <caption>
+                        {% for t in tipos %}
+                        <b>{{ t.abreviatura }}</b> - <i>{{ t }}</i>
+                        {% endfor %}
+                    </caption>
+                    <caption>
+                        {% for s in salas %}
+                        <b>{{ s.abreviatura }}</b> - <i>{{ s }}</i>
+                        {% endfor %}
+                    </caption>
+                    <thead>
+                    <tr>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Designação</th>
+                        <th scope="col">Sala</th>
+                        <th scope="col">Marca</th>
+                        <th scope="col">Modelo</th>
+                        <th scope="col">Cor</th>
+                        <th scope="col">Pb (mm)</th>
+                        <th scope="col">Última Ver.</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Utilização</th>
+                        <th scope="col">Próx. Ver.</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for p in filter.qs %}
+                    <tr class="shadow-sm p-3 mb-5 rounded table-row" data-href="{{ p.get_absolute_url }}">
+                        <td scope="row">{{ p.estado }}</td>
+                        <td scope="row">{{ p.slug }}</td>
+                        <td scope="row">{{ p.sala.abreviatura }}</td>
+                        <td scope="row">{{ p.marca }}</td>
+                        <td scope="row">{{ p.modelo }}</td>
+                        <td scope="row"><i class="fas fa-circle" style="color: {{ p.cor }};"></i></td>
+                        <td scope="row">{{ p.espessuraPb }}</td>
+                        <td scope="row">{{ p.get_latest_ver.data|date:"d M, Y" }}</td>
+                        <td scope="row">
+                            {% if p.get_state == "Com defeito" %}
+                            <i class="fas fa-exclamation-triangle" style="color: orange;"></i>
+                            {% elif p.get_state == "OK" %}
+                            <i class="fas fa-check-circle" style="color: green;"></i>
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ p.utilizacao }}</td>
+                        <td scope="row">{{ p.get_next_ver|date:"d M, Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{% static 'epi/js/jQuery-Scanner-Detection-master/jquery.scannerdetection.js' %}"></script>
+<script src="{% static 'epi/js/barcode_v1.js' %}"></script>
+{% endblock %}
+
+</html>
